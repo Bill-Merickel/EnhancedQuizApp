@@ -45,6 +45,13 @@ class ViewController: UIViewController {
         indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextIntWithUpperBound(trivia.count)
         let questionDictionary = trivia[indexOfSelectedQuestion]
         questionField.text = questionDictionary.question
+        let selectedQuestionDict = trivia[indexOfSelectedQuestion]
+        
+        
+        button1.setTitle(selectedQuestionDict.answer1.answer, forState: UIControlState.Normal)
+        button2.setTitle(selectedQuestionDict.answer2.answer, forState: UIControlState.Normal)
+        button3.setTitle(selectedQuestionDict.answer3.answer, forState: UIControlState.Normal)
+        button4.setTitle(selectedQuestionDict.answer4.answer, forState: UIControlState.Normal)
 
         playAgainButton.hidden = true
     }
@@ -66,9 +73,11 @@ class ViewController: UIViewController {
     @IBAction func checkAnswer(sender: UIButton) {
         // Increment the questions asked counter
         questionsAsked += 1
-        
         let selectedQuestionDict = trivia[indexOfSelectedQuestion]
+        
         var correctAnswer: Bool
+        
+        correctAnswer = false
         
         if selectedQuestionDict.answer1.correct == true {
             correctAnswer = selectedQuestionDict.answer1.correct
@@ -80,7 +89,7 @@ class ViewController: UIViewController {
             correctAnswer = selectedQuestionDict.answer4.correct
         }
         
-        if (sender === button1 && correctAnswer == true) || (sender === button2 && correctAnswer == true) || (sender === button1 && correctAnswer == true) || (sender === button2 && correctAnswer == true {
+        if (sender === button1 && correctAnswer == true) || (sender === button2 && correctAnswer == true) || (sender === button3 && correctAnswer == true) || (sender === button4 && correctAnswer == true) {
             correctQuestions += 1
             questionField.text = "Correct!"
         } else {
