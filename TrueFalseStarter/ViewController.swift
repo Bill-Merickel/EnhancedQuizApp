@@ -12,10 +12,11 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
-    let questionsPerRound = 4
+    let questionsPerRound = trivia.count
     var questionsAsked = 0
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
+    var correctAnswer = ""
     
     var gameSound: SystemSoundID = 0
     
@@ -45,13 +46,11 @@ class ViewController: UIViewController {
         indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextIntWithUpperBound(trivia.count)
         let questionDictionary = trivia[indexOfSelectedQuestion]
         questionField.text = questionDictionary.question
-        let selectedQuestionDict = trivia[indexOfSelectedQuestion]
         
-        
-        button1.setTitle(selectedQuestionDict.answer1.answer, forState: UIControlState.Normal)
-        button2.setTitle(selectedQuestionDict.answer2.answer, forState: UIControlState.Normal)
-        button3.setTitle(selectedQuestionDict.answer3.answer, forState: UIControlState.Normal)
-        button4.setTitle(selectedQuestionDict.answer4.answer, forState: UIControlState.Normal)
+        button1.setTitle(questionDictionary.answer1.answer, forState: UIControlState.Normal)
+        button2.setTitle(questionDictionary.answer2.answer, forState: UIControlState.Normal)
+        button3.setTitle(questionDictionary.answer3.answer, forState: UIControlState.Normal)
+        button4.setTitle(questionDictionary.answer4.answer, forState: UIControlState.Normal)
 
         playAgainButton.hidden = true
     }
@@ -66,8 +65,11 @@ class ViewController: UIViewController {
         // Display play again button
         playAgainButton.hidden = false
         
-        questionField.text = "Way to go!\nYou got \(correctQuestions) out of \(questionsPerRound) correct!"
-        
+        if correctQuestions >= 3 {
+            questionField.text = "Way to go!\nYou got \(correctQuestions) out of \(questionsPerRound) correct!"
+        } else {
+            questionField.text = "Bummer.\nYou got \(correctQuestions) out of \(questionsPerRound) correct."
+        }
     }
     
     @IBAction func checkAnswer(sender: UIButton) {
@@ -75,21 +77,17 @@ class ViewController: UIViewController {
         questionsAsked += 1
         let selectedQuestionDict = trivia[indexOfSelectedQuestion]
         
-        var correctAnswer: Bool
-        
-        correctAnswer = false
-        
         if selectedQuestionDict.answer1.correct == true {
-            correctAnswer = selectedQuestionDict.answer1.correct
+            correctAnswer = selectedQuestionDict.answer1.answer
         } else if selectedQuestionDict.answer2.correct == true {
-            correctAnswer = selectedQuestionDict.answer2.correct
+            correctAnswer = selectedQuestionDict.answer2.answer
         } else if selectedQuestionDict.answer3.correct == true {
-            correctAnswer = selectedQuestionDict.answer3.correct
+            correctAnswer = selectedQuestionDict.answer3.answer
         } else if selectedQuestionDict.answer4.correct == true {
-            correctAnswer = selectedQuestionDict.answer4.correct
+            correctAnswer = selectedQuestionDict.answer4.answer
         }
         
-        if (sender === button1 && correctAnswer == true) || (sender === button2 && correctAnswer == true) || (sender === button3 && correctAnswer == true) || (sender === button4 && correctAnswer == true) {
+        if sender.titleLabel!.text == correctAnswer {
             correctQuestions += 1
             questionField.text = "Correct!"
         } else {
