@@ -53,6 +53,11 @@ class ViewController: UIViewController {
         button4.setTitle(questionDictionary.answer4.answer, forState: UIControlState.Normal)
 
         playAgainButton.hidden = true
+        
+        button1.enabled = true
+        button2.enabled = true
+        button3.enabled = true
+        button4.enabled = true
     }
     
     func displayScore() {
@@ -74,7 +79,6 @@ class ViewController: UIViewController {
     
     @IBAction func checkAnswer(sender: UIButton) {
         // Increment the questions asked counter
-        questionsAsked += 1
         let selectedQuestionDict = trivia[indexOfSelectedQuestion]
         
         if selectedQuestionDict.answer1.correct == true {
@@ -94,7 +98,14 @@ class ViewController: UIViewController {
             self.questionField.text = "Sorry, wrong answer!"
         }
         
+        questionsAsked += 1
+        
         trivia.removeAtIndex(indexOfSelectedQuestion)
+        
+        button1.enabled = false
+        button2.enabled = false
+        button3.enabled = false
+        button4.enabled = false
         
         loadNextRoundWithDelay(seconds: 2)
     }
@@ -109,17 +120,24 @@ class ViewController: UIViewController {
         }
     }
     
+    func restoreQuestions() {
+        for questions in triviaSet {
+            trivia.append(questions)
+        }
+    }
+    
     @IBAction func playAgain() {
         // Show the answer buttons
+
+        questionsAsked = 0
+        correctQuestions = 0
+        restoreQuestions()
+        displayQuestion()
+        
         button1.hidden = false
         button2.hidden = false
         button3.hidden = false
         button4.hidden = false
-        
-        
-        questionsAsked = 0
-        correctQuestions = 0
-        nextRound()
     }
     
     

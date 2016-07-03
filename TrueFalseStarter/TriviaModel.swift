@@ -26,3 +26,5 @@ let question3 = Trivia(question: "What year did XCode come out in?", answer1: An
 let question4 = Trivia(question: "How many iPhones are there currently?", answer1: Answer(answer: "5", correct: false), answer2: Answer(answer: "10", correct: false), answer3: Answer(answer: "13", correct: true), answer4: Answer(answer: "16", correct: false))
 
 var trivia = [question1, question2, question3, question4]
+
+let triviaSet = [question1, question2, question3, question4]
