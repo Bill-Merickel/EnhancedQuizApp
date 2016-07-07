@@ -13,6 +13,7 @@
 		97093D431C913506001275BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97093D421C913506001275BC /* Assets.xcassets */; };
 		97093D461C913506001275BC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97093D441C913506001275BC /* LaunchScreen.storyboard */; };
 		97093D531C932116001275BC /* GameSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 97093D521C932116001275BC /* GameSound.wav */; };
+		B30745391D2DE47100A15A7A /* Sad_Trombone-Joe_Lamb-665429450.wav in Resources */ = {isa = PBXBuildFile; fileRef = B30745381D2DE47100A15A7A /* Sad_Trombone-Joe_Lamb-665429450.wav */; };
 		B355FC631D25730100298B1E /* TriviaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355FC621D25730100298B1E /* TriviaModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +26,7 @@
 		97093D451C913506001275BC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97093D471C913506001275BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		97093D521C932116001275BC /* GameSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = GameSound.wav; sourceTree = "<group>"; };
+		B30745381D2DE47100A15A7A /* Sad_Trombone-Joe_Lamb-665429450.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Sad_Trombone-Joe_Lamb-665429450.wav"; sourceTree = "<group>"; };
 		B355FC621D25730100298B1E /* TriviaModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriviaModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,6 +68,7 @@
 				97093D441C913506001275BC /* LaunchScreen.storyboard */,
 				97093D471C913506001275BC /* Info.plist */,
 				97093D521C932116001275BC /* GameSound.wav */,
+				B30745381D2DE47100A15A7A /* Sad_Trombone-Joe_Lamb-665429450.wav */,
 			);
 			path = TrueFalseStarter;
 			sourceTree = "<group>";
@@ -130,6 +133,7 @@
 			files = (
 				97093D531C932116001275BC /* GameSound.wav in Resources */,
 				97093D461C913506001275BC /* LaunchScreen.storyboard in Resources */,
+				B30745391D2DE47100A15A7A /* Sad_Trombone-Joe_Lamb-665429450.wav in Resources */,
 				97093D431C913506001275BC /* Assets.xcassets in Resources */,
 				97093D411C913506001275BC /* Main.storyboard in Resources */,
 			);
