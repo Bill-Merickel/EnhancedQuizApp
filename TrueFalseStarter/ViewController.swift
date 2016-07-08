@@ -19,7 +19,8 @@ class ViewController: UIViewController {
     var indexOfSelectedQuestion: Int = 0
     var correctAnswer = ""
     var timer = NSTimer()
-    var counter = 15
+    var counter: NSTimeInterval = 15
+    var timeLeft = 15
     
     
     var trueSound: SystemSoundID = 0
@@ -38,13 +39,9 @@ class ViewController: UIViewController {
         questionField.hidden = true
         countingLabel.hidden = true
         checkLabel.hidden = true
-        button1.hidden = true
-        button2.hidden = true
-        button3.hidden = true
-        button4.hidden = true
+        hideButtons()
         playAgainButton.hidden = true
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,22 +52,6 @@ class ViewController: UIViewController {
         // Start game
         appStart()
         displayQuestion()
-        
-        func startTimer() {
-            countingLabel.text = String(counter)
-            self.timer = NSTimer(timeInterval: 1, target: self, selector: Selector(updateCounter()), userInfo: nil, repeats: true)
-        }
-        
-        func updateCounter() {
-            while counter > 0 {
-                countingLabel.text = String(self.counter--)
-            }
-        }
-        
-        startTimer()
-        updateCounter()
-
-        
         button1.layer.cornerRadius = 15
         button2.layer.cornerRadius = 15
         button3.layer.cornerRadius = 15
@@ -99,26 +80,17 @@ class ViewController: UIViewController {
         
         questionField.hidden = false
         countingLabel.hidden = false
-        button1.hidden = false
-        button2.hidden = false
-        button3.hidden = false
-        button4.hidden = false
         
-        button1.enabled = true
-        button2.enabled = true
-        button3.enabled = true
-        button4.enabled = true
+        showButtons()
         
+        enableButtons()
     }
     
     func displayScore() {
         // Hide the answer buttons
         countingLabel.hidden = true
         checkLabel.hidden = true
-        button1.hidden = true
-        button2.hidden = true
-        button3.hidden = true
-        button4.hidden = true
+        hideButtons()
         
         // Display play again button
         playAgainButton.hidden = false
@@ -127,6 +99,20 @@ class ViewController: UIViewController {
             questionField.text = "Way to go!\nYou got \(correctQuestions) out of \(questionsPerRound) correct!"
         } else {
             questionField.text = "Bummer.\nYou got \(correctQuestions) out of \(questionsPerRound) correct."
+        }
+    }
+    
+    func startTimer() {
+        timer = NSTimer(timeInterval: counter, target: self, selector: Selector(updateCounter()), userInfo: nil, repeats: true)
+    }
+    
+    func updateCounter() {
+        timeLeft -= 1
+        
+        if timeLeft == 0 {
+            timer.invalidate()
+            checkLabel.text = "Sorry, you ran out of time!"
+            checkLabel.textColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
         }
     }
     
@@ -176,10 +162,7 @@ class ViewController: UIViewController {
         
         trivia.removeAtIndex(indexOfSelectedQuestion)
         
-        button1.enabled = false
-        button2.enabled = false
-        button3.enabled = false
-        button4.enabled = false
+        disableButtons()
         
         loadNextRoundWithDelay(seconds: 2)
     }
@@ -194,28 +177,40 @@ class ViewController: UIViewController {
         }
     }
     
-    func startTimer() {
-        countingLabel.text = String(counter)
-        self.timer = NSTimer(timeInterval: 1, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
+    func enableButtons() {
+        button1.enabled = true
+        button2.enabled = true
+        button3.enabled = true
+        button4.enabled = true
     }
     
-    func updateCounter() {
-        while counter > 0 {
-            countingLabel.text = String(self.counter--)
-        }
+    func disableButtons() {
+        button1.enabled = false
+        button2.enabled = false
+        button3.enabled = false
+        button4.enabled = false
     }
     
-    func timesUp(sender: UIButton) {
-        checkAnswer(sender)
-        self.timer.invalidate()
+    func showButtons() {
+        button1.hidden = false
+        button2.hidden = false
+        button3.hidden = false
+        button4.hidden = false
     }
+    
+    func hideButtons() {
+        button1.hidden = true
+        button2.hidden = true
+        button3.hidden = true
+        button4.hidden = true
+    }
+    
     
     func restoreQuestions() {
         for questions in triviaSet {
             trivia.append(questions)
         }
     }
-    
     
     @IBAction func playAgain() {
         // Show the answer buttons
@@ -224,11 +219,7 @@ class ViewController: UIViewController {
         correctQuestions = 0
         restoreQuestions()
         displayQuestion()
-        
-        button1.hidden = false
-        button2.hidden = false
-        button3.hidden = false
-        button4.hidden = false
+        showButtons()
     }
     
     // MARK: Helper Methods
