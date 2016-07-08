@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     var timer = NSTimer()
     var counter: NSTimeInterval = 15
     var timeLeft = 15
+    var counterRunning = false
     
     
     var trueSound: SystemSoundID = 0
@@ -45,18 +46,24 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        countingLabel.text = String(counter)
         loadGameTrueSound()
         loadGameFalseSound()
-        // Start game
         appStart()
+        beginTimer()
         displayQuestion()
         button1.layer.cornerRadius = 15
         button2.layer.cornerRadius = 15
         button3.layer.cornerRadius = 15
         button4.layer.cornerRadius = 15
         playAgainButton.layer.cornerRadius = 15
+        
+        func shouldAutorotate() -> Bool {
+            return false
+        }
+        
+        func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+            return UIInterfaceOrientationMask.Portrait
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -69,7 +76,8 @@ class ViewController: UIViewController {
         indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextIntWithUpperBound(trivia.count)
         let questionDictionary = trivia[indexOfSelectedQuestion]
         questionField.text = questionDictionary.question
-        
+        countingLabel.text = "15"
+        beginTimer()
         button1.setTitle(questionDictionary.answer1.answer, forState: UIControlState.Normal)
         button2.setTitle(questionDictionary.answer2.answer, forState: UIControlState.Normal)
         button3.setTitle(questionDictionary.answer3.answer, forState: UIControlState.Normal)
@@ -84,6 +92,17 @@ class ViewController: UIViewController {
         showButtons()
         
         enableButtons()
+        
+        if counter == 0.0 {
+            questionsAsked += 1
+            trivia.removeAtIndex(indexOfSelectedQuestion)
+            disableButtons()
+            checkLabel.hidden = false
+            playGameFalseSound()
+            checkLabel.text = "You ran out of time."
+            checkLabel.textColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
+            timer.invalidate()
+        }
     }
     
     func displayScore() {
@@ -102,24 +121,46 @@ class ViewController: UIViewController {
         }
     }
     
-    func startTimer() {
-        timer = NSTimer(timeInterval: counter, target: self, selector: Selector(updateCounter()), userInfo: nil, repeats: true)
+    @IBAction func checkAnswer(sender: UIButton) {
+        
+        showRightAnswer()
+        counterRunning = false
+        
+        if sender.titleLabel!.text == correctAnswer {
+            correctQuestions += 1
+
+            checkLabel.hidden = false
+            playGameTrueSound()
+            checkLabel.text = "Correct!"
+            checkLabel.textColor = UIColor(red: 0, green: 1, blue: 0, alpha: 1)
+            timer.invalidate()
+        } else {
+            checkLabel.hidden = false
+            playGameFalseSound()
+            checkLabel.text = "Sorry, wrong answer."
+            checkLabel.textColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
+            timer.invalidate()
+        }
+        
+        questionsAsked += 1
+        trivia.removeAtIndex(indexOfSelectedQuestion)
+        disableButtons()
+        loadNextRoundWithDelay(seconds: 3)
     }
     
-    func updateCounter() {
-        timeLeft -= 1
-        
-        if timeLeft == 0 {
-            timer.invalidate()
-            checkLabel.text = "Sorry, you ran out of time!"
-            checkLabel.textColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
+    func nextRound() {
+        if questionsAsked == questionsPerRound {
+            // Game is over
+            displayScore()
+        } else {
+            // Continue game
+            displayQuestion()
         }
     }
     
-    @IBAction func checkAnswer(sender: UIButton) {
-        // Increment the questions asked counter
+    func showRightAnswer() {
         let selectedQuestionDict = trivia[indexOfSelectedQuestion]
-        
+
         if selectedQuestionDict.answer1.correct == true {
             correctAnswer = selectedQuestionDict.answer1.answer
         } else if selectedQuestionDict.answer2.correct == true {
@@ -129,21 +170,6 @@ class ViewController: UIViewController {
         } else if selectedQuestionDict.answer4.correct == true {
             correctAnswer = selectedQuestionDict.answer4.answer
         }
-        
-        if sender.titleLabel!.text == correctAnswer {
-            correctQuestions += 1
-
-            checkLabel.hidden = false
-            playGameTrueSound()
-            checkLabel.text = "Correct!"
-            checkLabel.textColor = UIColor(red: 0, green: 1, blue: 0, alpha: 1)
-        } else {
-            checkLabel.hidden = false
-            playGameFalseSound()
-            checkLabel.text = "Sorry, wrong answer."
-            checkLabel.textColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
-        }
-        
         
         if selectedQuestionDict.answer1.correct == false {
             button1.hidden = true
@@ -157,26 +183,21 @@ class ViewController: UIViewController {
         if selectedQuestionDict.answer4.correct == false {
             button4.hidden = true
         }
-        
-        questionsAsked += 1
-        
-        trivia.removeAtIndex(indexOfSelectedQuestion)
-        
-        disableButtons()
-        
-        loadNextRoundWithDelay(seconds: 2)
     }
     
-    func nextRound() {
-        if questionsAsked == questionsPerRound {
-            // Game is over
-            displayScore()
-        } else {
-            // Continue game
-            displayQuestion()
+    func beginTimer() {
+        if counterRunning == false {
+            timeLeft = 15
+            counter = 15
+            timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(ViewController.updateCounter), userInfo: nil, repeats: true)
+            counterRunning = true
         }
     }
     
+    func updateCounter() {
+        timeLeft -= 1
+        countingLabel.text = "\(timeLeft)"
+    }
     func enableButtons() {
         button1.enabled = true
         button2.enabled = true
