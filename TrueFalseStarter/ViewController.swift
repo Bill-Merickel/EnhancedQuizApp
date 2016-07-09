@@ -30,7 +30,7 @@ class ViewController: UIViewController {
     var trueSound: SystemSoundID = 0
     var falseSound: SystemSoundID = 1
     
-    // Connections to View
+    // Connections to the View
     @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var countingLabel: UILabel!
     @IBOutlet weak var checkLabel: UILabel!
