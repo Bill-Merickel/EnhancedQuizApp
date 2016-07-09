@@ -13,20 +13,24 @@ import AudioToolbox
 
 class ViewController: UIViewController {
     
+    // Game Mechanics
     let questionsPerRound = trivia.count
     var questionsAsked = 0
     var correctQuestions = 0
     var indexOfSelectedQuestion: Int = 0
     var correctAnswer = ""
+    
+    // Timer Mechanics
     var timer = NSTimer()
     var counter: NSTimeInterval = 15
     var timeLeft = 15
     var counterRunning = false
     
-    
+    // Game Sounds
     var trueSound: SystemSoundID = 0
     var falseSound: SystemSoundID = 1
     
+    // Connections to View
     @IBOutlet weak var questionField: UILabel!
     @IBOutlet weak var countingLabel: UILabel!
     @IBOutlet weak var checkLabel: UILabel!
@@ -36,14 +40,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var button4: UIButton!
     @IBOutlet weak var playAgainButton: UIButton!
     
-    func appStart() {
-        questionField.hidden = true
-        countingLabel.hidden = true
-        checkLabel.hidden = true
-        hideButtons()
-        playAgainButton.hidden = true
-    }
-    
+    // Start the app
     override func viewDidLoad() {
         super.viewDidLoad()
         loadGameTrueSound()
@@ -56,6 +53,7 @@ class ViewController: UIViewController {
         button4.layer.cornerRadius = 15
         playAgainButton.layer.cornerRadius = 15
         
+        // Enable portrait mode only.
         func shouldAutorotate() -> Bool {
             return false
         }
@@ -70,14 +68,28 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    // Prepare app UI for first question.
+    func appStart() {
+        questionField.hidden = true
+        countingLabel.hidden = true
+        checkLabel.hidden = true
+        hideButtons()
+        playAgainButton.hidden = true
+    }
+    
     func displayQuestion() {
         
+        // Pick a random question
         indexOfSelectedQuestion = GKRandomSource.sharedRandom().nextIntWithUpperBound(trivia.count)
         let questionDictionary = trivia[indexOfSelectedQuestion]
         questionField.text = questionDictionary.question
+        
+        // Begin the timer
         countingLabel.text = "15"
         resetTimer()
         beginTimer()
+        
+        // Set up buttons
         button1.setTitle(questionDictionary.answer1.answer, forState: UIControlState.Normal)
         button2.setTitle(questionDictionary.answer2.answer, forState: UIControlState.Normal)
         button3.setTitle(questionDictionary.answer3.answer, forState: UIControlState.Normal)
@@ -85,15 +97,15 @@ class ViewController: UIViewController {
 
         checkLabel.hidden = true
         playAgainButton.hidden = true
-        
         questionField.hidden = false
         countingLabel.hidden = false
-        
         showButtons()
-        
         enableButtons()
         
+        // If the timer reaches 0...
         if counter == 0.0 {
+            
+            // Mark answer as wrong and move to next question
             questionsAsked += 1
             trivia.removeAtIndex(indexOfSelectedQuestion)
             disableButtons()
@@ -106,36 +118,37 @@ class ViewController: UIViewController {
     }
     
     func displayScore() {
-        // Hide the answer buttons
+        // Hide the answer buttons, show score and button to play again.
         countingLabel.hidden = true
         checkLabel.hidden = true
         hideButtons()
-        beginTimer()
-        
-        // Display play again button
         playAgainButton.hidden = false
         
-        if correctQuestions >= 3 {
+        // Congratulate or show disappointment
+        if correctQuestions >= 7 {
             questionField.text = "Way to go!\nYou got \(correctQuestions) out of \(questionsPerRound) correct!"
         } else {
             questionField.text = "Bummer.\nYou got \(correctQuestions) out of \(questionsPerRound) correct."
         }
     }
     
+    // When an answer is selected...
     @IBAction func checkAnswer(sender: UIButton) {
         
         showRightAnswer()
         counterRunning = false
         
+        // If the answer is right...
         if sender.titleLabel!.text == correctAnswer {
+            // Stop timer and play the Correct sound
             correctQuestions += 1
-
             checkLabel.hidden = false
             playGameTrueSound()
             checkLabel.text = "Correct!"
             checkLabel.textColor = UIColor(red: 0, green: 1, blue: 0, alpha: 1)
             timer.invalidate()
         } else {
+            // Stop timer and play the Incorrect sound
             checkLabel.hidden = false
             playGameFalseSound()
             checkLabel.text = "Sorry, wrong answer."
@@ -143,12 +156,14 @@ class ViewController: UIViewController {
             timer.invalidate()
         }
         
+        // Remove the question from the list of questions, load the next round in 3 seconds.
         questionsAsked += 1
         trivia.removeAtIndex(indexOfSelectedQuestion)
         disableButtons()
         loadNextRoundWithDelay(seconds: 3)
     }
     
+    // If all questions have been asked...
     func nextRound() {
         if questionsAsked == questionsPerRound {
             // Game is over
@@ -159,9 +174,12 @@ class ViewController: UIViewController {
         }
     }
     
+    
+    // This function showcases the right answer.
     func showRightAnswer() {
+        
+        // This decides which button has the right answer.
         let selectedQuestionDict = trivia[indexOfSelectedQuestion]
-
         if selectedQuestionDict.answer1.correct == true {
             correctAnswer = selectedQuestionDict.answer1.answer
         } else if selectedQuestionDict.answer2.correct == true {
@@ -172,6 +190,7 @@ class ViewController: UIViewController {
             correctAnswer = selectedQuestionDict.answer4.answer
         }
         
+        // This shows the correct button and hides all others.
         if selectedQuestionDict.answer1.correct == false {
             button1.hidden = true
         }
@@ -186,6 +205,7 @@ class ViewController: UIViewController {
         }
     }
     
+    // Start the timer
     func beginTimer() {
         if counterRunning == false {
             timeLeft = 15
@@ -195,10 +215,15 @@ class ViewController: UIViewController {
         }
     }
     
+    // Update the timer label every second
     func updateCounter() {
         timeLeft -= 1
         countingLabel.text = "\(timeLeft)"
+        
+        // If you ran out of time...
         if timeLeft == 0 {
+            
+            // Move on to the next question
             timer.invalidate()
             checkLabel.hidden = false
             checkLabel.text = "Sorry, you ran out of time!"
@@ -210,6 +235,7 @@ class ViewController: UIViewController {
         }
     }
     
+    // Reset the timer
     func resetTimer() {
         counter = 15
         timeLeft = 15
@@ -217,6 +243,7 @@ class ViewController: UIViewController {
         beginTimer()
     }
     
+    // Enable buttons
     func enableButtons() {
         button1.enabled = true
         button2.enabled = true
@@ -224,6 +251,7 @@ class ViewController: UIViewController {
         button4.enabled = true
     }
     
+    // Disable buttons
     func disableButtons() {
         button1.enabled = false
         button2.enabled = false
@@ -231,6 +259,7 @@ class ViewController: UIViewController {
         button4.enabled = false
     }
     
+    // Show buttons
     func showButtons() {
         button1.hidden = false
         button2.hidden = false
@@ -238,6 +267,7 @@ class ViewController: UIViewController {
         button4.hidden = false
     }
     
+    // Hide buttons
     func hideButtons() {
         button1.hidden = true
         button2.hidden = true
@@ -245,13 +275,14 @@ class ViewController: UIViewController {
         button4.hidden = true
     }
     
-    
+    // Reset the question set
     func restoreQuestions() {
         for questions in triviaSet {
             trivia.append(questions)
         }
     }
     
+    // Start a new round
     @IBAction func playAgain() {
         // Show the answer buttons
 
@@ -276,6 +307,7 @@ class ViewController: UIViewController {
         }
     }
     
+    // Correct Game Sound
     func loadGameTrueSound() {
         let pathToSoundFile = NSBundle.mainBundle().pathForResource("GameSound", ofType: "wav")
         let soundURL = NSURL(fileURLWithPath: pathToSoundFile!)
@@ -286,6 +318,7 @@ class ViewController: UIViewController {
         AudioServicesPlaySystemSound(trueSound)
     }
     
+    // Incorrect Game SOund
     func loadGameFalseSound() {
         let pathToSoundFile = NSBundle.mainBundle().pathForResource("Sad_Trombone-Joe_Lamb-665429450", ofType: "wav")
         let soundURL = NSURL(fileURLWithPath: pathToSoundFile!)
