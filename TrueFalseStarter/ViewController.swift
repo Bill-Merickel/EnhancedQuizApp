@@ -49,7 +49,6 @@ class ViewController: UIViewController {
         loadGameTrueSound()
         loadGameFalseSound()
         appStart()
-        beginTimer()
         displayQuestion()
         button1.layer.cornerRadius = 15
         button2.layer.cornerRadius = 15
@@ -77,6 +76,7 @@ class ViewController: UIViewController {
         let questionDictionary = trivia[indexOfSelectedQuestion]
         questionField.text = questionDictionary.question
         countingLabel.text = "15"
+        resetTimer()
         beginTimer()
         button1.setTitle(questionDictionary.answer1.answer, forState: UIControlState.Normal)
         button2.setTitle(questionDictionary.answer2.answer, forState: UIControlState.Normal)
@@ -110,6 +110,7 @@ class ViewController: UIViewController {
         countingLabel.hidden = true
         checkLabel.hidden = true
         hideButtons()
+        beginTimer()
         
         // Display play again button
         playAgainButton.hidden = false
@@ -197,7 +198,25 @@ class ViewController: UIViewController {
     func updateCounter() {
         timeLeft -= 1
         countingLabel.text = "\(timeLeft)"
+        if timeLeft == 0 {
+            timer.invalidate()
+            checkLabel.hidden = false
+            checkLabel.text = "Sorry, you ran out of time!"
+            checkLabel.textColor = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
+            questionsAsked += 1
+            playGameFalseSound()
+            loadNextRoundWithDelay(seconds: 3)
+            trivia.removeAtIndex(indexOfSelectedQuestion)
+        }
     }
+    
+    func resetTimer() {
+        counter = 15
+        timeLeft = 15
+        counterRunning = false
+        beginTimer()
+    }
+    
     func enableButtons() {
         button1.enabled = true
         button2.enabled = true
