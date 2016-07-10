@@ -33,7 +33,7 @@ let question9 = Trivia(question: "How many devices are currently linked to the I
 let question10 = Trivia(question: "How man computer viruses are released each month?", answer1: Answer(answer: "100", correct: false), answer2: Answer(answer: "1800", correct: false), answer3: Answer(answer: "3700", correct: false), answer4: Answer(answer: "6400", correct: true))
 
 // Create question set
-var trivia = [question1, question2, question3, question4, question5, question6, question7, question8, question9, question10]
+var triviaSet = [question1, question2, question3, question4, question5, question6, question7, question8, question9, question10]
 
 // Use this set to restore the questions
-let triviaSet = [question1, question2, question3, question4, question5, question6, question7, question8, question9, question10]
+let listOfQuestions = [question1, question2, question3, question4, question5, question6, question7, question8, question9, question10]
